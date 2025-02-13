@@ -1,0 +1,55 @@
+{
+  "ignition": {
+    "version": "3.5.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzu04OM09F1W3OMSoNDk+AaGESbRv2MdL16BqYWmCB+ODzZOXHsFN1pvaxoAcqAKkqnGbMoIyydAW7FmUIAKz2RB+VHRJREgDeyVpsRo4RXw2nJmWZVdWFWh8OHcH62QSxQEQoVveovi1viaSxKkQY4ZGzq5O7t5setUwohyuOARq2SfrxZvoZP8v+uVA0Cb5//cg85vX4yJ0/f7IZ3CoZa+IfLxHS0cpvZ6VfXb2yfbiBL1EKirvkGhP80uI8Fmx8qmt0TgA5Hq/Z5u6oHUnNOOoejHu5gUpb+GZYO7R3abOKSUjUq4HCujDpnGT88YI+EUiAqAY1BFFCUh4LOkVmHHbRbDmXB0dCIDHfN2vGYWZqy+pAUclSt+DtMMsT8qIHhf99MSRtqcUisRbtd+IYViiViVl/84axLftZLc19QPS+sB2Q/QL7Rp4KhSqg1lyPhu+XxJ6FXgmq4nrTxXg2g0xAJ8K/UAD9C7n4/zytGcLnZHrROgSC1rCXacUDZ1c="
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "directories": [
+      {
+        "overwrite": true,
+        "path": "/etc/yum.repos.d"
+      }
+    ],
+    "files": [
+      {
+        "path": "/etc/hostname",
+        "contents": {
+          "compression": "",
+          "source": "data:,okd-mgr01"
+        },
+        "mode": 420
+      },
+      {
+        "path": "/etc/NetworkManager/system-connections/ens192.nmconnection",
+        "contents": {
+          "compression": "gzip",
+          "source": "data:;base64,H4sIAAAAAAAC/0TKQQrCMBBG4f3cxdgptVVKTlK6GJpfGzCTkoxKby8I6u7x+KYlq2KxmHWmGDy08qUl2zd42IqiMIpqKFdZcFBJ+Bqa4vbsZkqwNQefRB9yJwmhoFZUz407Na49u56PbUc3Mbxk/2+moB/VOHY89OMvh5HeAQAA//+0d3udmAAAAA=="
+        },
+        "mode": 384
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "contents": "[Unit]\nDescription=QEMU Guest Agent\nBindsTo=dev-virtio\\x2dports-org.qemu.guest_agent.0.device\nAfter=dev-virtio\\x2dports-org.qemu.guest_agent.0.device\n\n[Service]\nExecStart=/usr/bin/qemu-ga\nRestart=always\nRestartSec=0\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "qemu-guest-agent.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Layer qemu-guest-agent with rpm-ostree\nWants=network-online.target\nAfter=network-online.target\nBefore=zincati.service\nConditionPathExists=!/var/lib/rpm-ostree/install-qemu-guest-agent.stamp\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/bin/rpm-ostree install --apply-live --allow-inactive qemu-guest-agent\nExecStart=/bin/touch /var/lib/rpm-ostree/install-qemu-guest-agent.stamp\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "rpm-ostree-install-qemu-guest-agent.service"
+      }
+    ]
+  }
+}
